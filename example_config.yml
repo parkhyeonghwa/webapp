@@ -1,0 +1,5 @@
+mysql:
+  user: webapp
+  password: foobar
+  host: localhost
+  database: app_data
