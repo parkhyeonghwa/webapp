@@ -1,5 +1,5 @@
 mysql:
   user: webapp
-  password: foobar
+  password: secretpass
   host: localhost
   database: app_data
