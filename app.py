@@ -11,12 +11,12 @@ import yaml
 
 class FormPage(Resource):
     def __init__(self, config):
-        self.page = '<html>\n<body>\n'
-        self.page = self.page + '<form method="POST">Name: <input name="name" type="text" maxlength="32"/>\n'
-        self.page = self.page + 'Favorite Color: <input name="color" type="text" maxlength="32"/>\n'
-        self.page = self.page + 'Cats or Dogs: <input name="animal" type="text" maxlength="32"/>\n'
-        self.page = self.page + '<button type="submit" name="action" value="Submit">Submit</button></form>\n'
-        self.ending_tags = '</body>\n</html>'
+        self.page = '<html>\n<body>'
+        self.page = self.page + '<form method="POST"><label>Name: </label><input name="name" type="text" maxlength="32"/><br>'
+        self.page = self.page + '<label>Favorite Color: </label><input name="color" type="text" maxlength="32"/><br>'
+        self.page = self.page + '<label>Cats or Dogs: </label><input name="animal" type="text" maxlength="32"/><br>'
+        self.page = self.page + '<button type="submit" name="action" value="Submit">Submit</button></form>'
+        self.ending_tags = '</body></html>'
         self.config = config
 
         try:
