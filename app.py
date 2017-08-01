@@ -11,6 +11,7 @@ import yaml
 
 class FormPage(Resource):
     def __init__(self, config):
+        # prepare the html for the site
         self.page = '<html>\n<body>'
         self.page = self.page + '<form method="POST"><label>Name: </label><input name="name" type="text" maxlength="32"/><br>'
         self.page = self.page + '<label>Favorite Color: </label><input name="color" type="text" maxlength="32"/><br>'
@@ -19,16 +20,19 @@ class FormPage(Resource):
         self.ending_tags = '</body></html>'
         self.config = config
 
+        # connect to the mysql db
         try:
             self.db = MySQLdb.connect(host = self.config['mysql']['host'],
                                       user = self.config['mysql']['user'],
                                       passwd = self.config['mysql']['password'],
                                       db = self.config['mysql']['db'])
 
+        # Quit if you fail to connect to the db
         except MySQLdb.OperationalError as e:
             print("failed to connect to database")
             sys.exit(1)
 
+        # Create the table for the db if it does not exist
         cur = self.db.cursor()
         cur.execute("SHOW TABLES LIKE 'data';")
         r = cur.fetchone()
@@ -41,6 +45,7 @@ class FormPage(Resource):
         return self.page + self.ending_tags
 
     def render_POST(self, request):
+        # Collect data from the form and put it in the databse
         insert_query = """INSERT INTO data (name, color, animal)
                        VALUES(%s,%s,%s)"""
         try:
@@ -52,15 +57,21 @@ class FormPage(Resource):
             cur.execute(insert_query, (name, color, animal))
 
             self.db.commit()
+
+        # If the data insert fails, return that it failed and the reason why
         except MySQLdb.IntegrityError as e:
             return self.page + str(e.args[1]) + self.ending_tags
 
+        # If we succeed, inform the user
         return self.page + 'success' + self.ending_tags
 
 def main():
+    # Open the config file and grab the configuration
     fstream = open("config.yml", "r")
     config = yaml.load(fstream)
     fstream.close()
+
+    # Create the site and start the server
     root = Resource()
     root.putChild("", FormPage(config))
     factory = Site(root)
